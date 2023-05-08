@@ -14,12 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+    option.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
 
 //register repository in program.cs
 builder.Services.AddScoped<IVillaRepository,VillaRepository>();
-builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
+builder.Services.AddScoped<IVillaNumberRepository,VillaNumberRepository>();
+
 
 //Inject Automapper dependency
 builder.Services.AddAutoMapper(typeof(MappingConfig));
