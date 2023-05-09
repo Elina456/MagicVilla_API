@@ -18,6 +18,7 @@ namespace MagicVilla_VillaAPI.Controllers
     //[Route("api/[controller]")]
     [Route("api/VillaAPI")]
     [ApiController]
+   
     public class VillaAPIController : ControllerBase
     {
         //private readonly ILogger<VillaAPIController> _logger;
@@ -45,7 +46,7 @@ namespace MagicVilla_VillaAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 
-		[Authorize]
+		
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
             //_logger.Log("Getting all villas","");
@@ -72,7 +73,7 @@ namespace MagicVilla_VillaAPI.Controllers
 
         
         [HttpGet("{id:int}", Name = "GetVilla")]
-		[Authorize(Roles = "Admin")]
+		
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -116,6 +117,7 @@ namespace MagicVilla_VillaAPI.Controllers
             // return Ok(_mapper.Map<VillaDTO>(Villa));
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -174,9 +176,8 @@ namespace MagicVilla_VillaAPI.Controllers
             return _response;
         }
 
-        
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}", Name = "DeleteVilla")]
-		[Authorize(Roles = "CUSTOM")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -215,7 +216,7 @@ namespace MagicVilla_VillaAPI.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}", Name = "UpdateVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -79,5 +79,6 @@ namespace MagicVilla_VillaAPI.Repository
 			user.Password = "";
 			return user;
 		}
+
 	}
 }
