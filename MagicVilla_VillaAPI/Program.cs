@@ -47,6 +47,8 @@ builder.Services.AddVersionedApiExplorer(options =>
 
 //Inject Automapper dependency
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+//Configure caching
+builder.Services.AddResponseCaching();
 
 //Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().
 //WriteTo.File("log/villaLogs.txt", rollingInterval: RollingInterval.Day).CreateLogger();
@@ -77,6 +79,11 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddControllers(option =>
 {
+	option.CacheProfiles.Add("Default20",
+		new CacheProfile()
+		{
+			Duration = 20
+		});
     //option.ReturnHttpNotAcceptable=true;
 }).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

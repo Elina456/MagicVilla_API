@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
+using System.Text.Json;
 
 namespace MagicVilla_VillaAPI.Controllers.v1
 {
@@ -43,12 +44,12 @@ namespace MagicVilla_VillaAPI.Controllers.v1
         }
 
         [HttpGet]
+         [ResponseCache(CacheProfileName ="Default20")]
+        //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-
-
-        public async Task<ActionResult<APIResponse>> GetVillas()
+        public async Task<ActionResult<APIResponse>> GetVillas([FromQuery(Name = "FilterOccupancy")] int? Occupancy, [FromQuery] string? search,int pageSize=0,int pageNumber=1)
         {
             //_logger.Log("Getting all villas","");
             // _logger.LogInformation("Geetting all villas");
@@ -59,7 +60,24 @@ namespace MagicVilla_VillaAPI.Controllers.v1
             // return Ok(_mapper.Map<List<VillaDTO>>(villaList));
             try
             {
-                IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
+                IEnumerable<Villa> villaList; 
+                if (Occupancy > 0)
+                {
+                    villaList = await _dbVilla.GetAllAsync(u => u.Occupancy == Occupancy,pageSize:pageSize,pageNumber:pageNumber);
+
+				}
+                else
+                {
+                    villaList = await _dbVilla.GetAllAsync(pageSize:pageSize,pageNumber:pageNumber);
+
+				}
+                if (!string.IsNullOrEmpty(search))
+                {
+                    villaList = villaList.Where(u=>
+                    u.Name.ToLower().Contains(search));
+                }
+                Pagination pagination = new() { PageNumber =pageNumber,PageSize=pageSize };
+                Response.Headers.Add("x-pagination",JsonSerializer.Serialize(pagination));
                 _response.Result = _mapper.Map<List<VillaDTO>>(villaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
