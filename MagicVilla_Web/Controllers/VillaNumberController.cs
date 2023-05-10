@@ -165,7 +165,7 @@ namespace MagicVilla_Web.Controllers
             {
                 VillaNumberDTO model = JsonConvert.DeserializeObject<VillaNumberDTO>(Convert.ToString(response.Result));
                 villaNumberVM.VillaNumber = model;
-                return View(model);
+               
 
             }
             response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.sessionToken));
@@ -183,13 +183,13 @@ namespace MagicVilla_Web.Controllers
             return NotFound();
         }
 
-        [HttpPost]
+		[Authorize(Roles = "Admin")]
+		[HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteVillaNumber(VillaNumberDeleteVM model)
+         public async Task<IActionResult> DeleteVillaNumber(VillaNumberDeleteVM model)
         {
 
-            var response = await _villaService.DeleteAsync<APIResponse>(model.VillaNumber.VillaNo, HttpContext.Session.GetString(SD.sessionToken));
+            var response = await _villaNumberService.DeleteAsync<APIResponse>(model.VillaNumber.VillaNo, HttpContext.Session.GetString(SD.sessionToken));
             if (response != null && response.IsSuccess)
             {
                 return RedirectToAction(nameof(IndexVillaNumber));
